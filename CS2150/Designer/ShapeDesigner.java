@@ -30,158 +30,113 @@ public class ShapeDesigner extends AbstractDesigner {
 	/** Main method **/
 	public static void main(String args[])
     {   
-		new ShapeDesigner().run( WINDOWED, "Designer", 0.01f);
+		new ShapeDesigner().run( WINDOWED, "Designer", 0.11f);
     }
 	
 	/** Draw the shape **/
     protected void drawUnitShape()
     {
-    	Vertex v1 = new Vertex(-0.3f, 1.0f, 0.5f);
-		Vertex v2 = new Vertex(1.25f, 1.0f, 0.5f);
-		Vertex v3 = new Vertex(-0.3f, 0.8f, 0.5f);
-		Vertex v4 = new Vertex(1.25f, 0.8f, 0.5f);
-		Vertex v5 = new Vertex(0.0f, 0.6f, 0.5f);
-		Vertex v6 = new Vertex(0.25f, 0.6f, 0.5f);
-		Vertex v7 = new Vertex(0.0f, 0.0f, 0.5f);
-		Vertex v8 = new Vertex(0.25f, 0.0f, 0.5f);	 
+    	Vertex v1 = new Vertex(0.0f, 0.0f, 0.0f);
+		Vertex v2 = new Vertex(0.0f, 1.0f, 0.0f);
+		Vertex v3 = new Vertex(1.0f, 1.0f, 0.0f);
+		Vertex v4 = new Vertex(1.0f, 0.0f, 0.0f);
+		Vertex v5 = new Vertex(1.0f, 0.0f, 2.0f);
+		Vertex v6 = new Vertex(1.0f, 1.0f, 2.0f);
+		Vertex v7 = new Vertex(0.0f, 1.0f, 2.0f);
+		Vertex v8 = new Vertex(0.0f, 0.0f, 2.0f);	 
 
-		Vertex v9 = new Vertex(-0.3f, 1.0f, -0.5f);
-		Vertex v10 = new Vertex(1.25f, 1.0f, -0.5f);
-		Vertex v11 = new Vertex(-0.3f, 0.8f, -0.5f);
-		Vertex v12 = new Vertex(1.25f, 0.8f, -0.5f);
-		Vertex v13 = new Vertex(0.0f, 0.6f, -0.5f);
-		Vertex v14 = new Vertex(0.25f, 0.6f, -0.5f);
-		Vertex v15 = new Vertex(0.0f, 0.0f, -0.5f);
-		Vertex v16 = new Vertex(0.25f, 0.0f, -0.5f);	 
+		Vertex v9 = new Vertex(0.5f, 1.5f, 0.0f);
+		Vertex v10 = new Vertex(0.5f, 1.0f, 2.0f); 
 
-		//near face of the laser
+		//near face of the body
 		GL11.glBegin(GL11.GL_POLYGON);
 		{
-			new Normal(v1.toVector(), v3.toVector(), v5.toVector(),
-					v7.toVector()).submit();
+			new Normal(v4.toVector(), v3.toVector(), v2.toVector(),
+					v1.toVector()).submit();
 
 
-			v1.submit();
-			v3.submit();
-			v5.submit();
-			v7.submit();
-			v8.submit();
-			v6.submit();
 			v4.submit();
+			v3.submit();
 			v2.submit();
+			v1.submit();
 			
 		}
 		GL11.glEnd();
 
-		//far face of the laser
+		//rear face of the body
 		GL11.glBegin(GL11.GL_POLYGON);
 		{
-			new Normal(v9.toVector(), v10.toVector(), v12.toVector(),
-					v14.toVector()).submit();
+			new Normal(v8.toVector(), v7.toVector(), v6.toVector(),
+					v5.toVector()).submit();
 
 
-			v9.submit();
-			v10.submit();
-			v12.submit();
-			v14.submit();
-			v16.submit();
-			v15.submit();
-			v13.submit();
-			v11.submit();
+			v8.submit();
+			v7.submit();
+			v6.submit();
+			v5.submit();
 			
 		}
 		GL11.glEnd();
 		
-		//top of the laser
+		//top right face of the body
 		GL11.glBegin(GL11.GL_POLYGON);
 		{
-			new Normal(v1.toVector(), v9.toVector(), v2.toVector(),
-					v10.toVector()).submit();
-
-			GL11.glTexCoord2f(0.0f,1.0f);
-
-			v1.submit();
-			GL11.glTexCoord2f(0.0f,0.0f);
-
-			v9.submit();
-			GL11.glTexCoord2f(0.0f,0.0f);
-
-			v2.submit();
-			GL11.glTexCoord2f(0.0f,0.0f);
-
-			v10.submit();
-
-			GL11.glEnd();
-
-		}
-		/*
-		//back of the laser
-		GL11.glBegin(GL11.GL_POLYGON);
-		{
-			new Normal(v1.toVector(), v9.toVector(), v3.toVector(),
-					v11.toVector()).submit();
-
-
-
-			v1.submit();
-			v9.submit();
-			v3.submit();
-			v11.submit();
-			v7.submit();
-			v15.submit();
-
-			GL11.glEnd();
-
-		}
-
-		//bottom of the laser
-		GL11.glBegin(GL11.GL_POLYGON);
-		{
-			new Normal(v3.toVector(), v11.toVector(), v4.toVector(),
-					v12.toVector()).submit();
+			new Normal(v3.toVector(), v6.toVector(), v10.toVector(),
+					v9.toVector()).submit();
 
 			v3.submit();
-			v11.submit();
-			v4.submit();
-			v12.submit();
-			v5.submit();
-			v13.submit();
-			v15.submit();
-			v7.submit();
-
-			GL11.glEnd();
-
-		}
-
-		//nozzle of the laser
-		GL11.glBegin(GL11.GL_POLYGON);
-		{
-			new Normal(v2.toVector(), v10.toVector(), v4.toVector(),
-					v12.toVector()).submit();
-
-			v2.submit();
-			v10.submit();
-			v4.submit();
-			v12.submit();
-
-			GL11.glEnd();
-
-		}
-
-		//handle of the laser
-		GL11.glBegin(GL11.GL_POLYGON);
-		{
-			new Normal(v6.toVector(), v14.toVector(), v8.toVector(),
-					v16.toVector()).submit();
-
 			v6.submit();
-			v14.submit();
+			v10.submit();
+			v9.submit();
+
+			GL11.glEnd();
+
+		}
+		
+		//top left face of the body
+		GL11.glBegin(GL11.GL_POLYGON);
+		{
+			new Normal(v2.toVector(), v7.toVector(), v10.toVector(),
+					v9.toVector()).submit();
+
+
+
+			v2.submit();
+			v7.submit();
+			v10.submit();
+			v9.submit();
+
+			GL11.glEnd();
+
+		}
+
+		//bottom of the body
+		GL11.glBegin(GL11.GL_POLYGON);
+		{
+			new Normal(v4.toVector(), v1.toVector(), v8.toVector(),
+					v5.toVector()).submit();
+
+			v4.submit();
+			v1.submit();
 			v8.submit();
-			v16.submit();
+			v5.submit();
+
+			GL11.glEnd();
+
+		}
+
+		//front top of the body
+		GL11.glBegin(GL11.GL_POLYGON);
+		{
+			new Normal(v2.toVector(), v3.toVector(), v9.toVector()).submit();
+
+			v2.submit();
+			v3.submit();
+			v9.submit();
 
 			GL11.glEnd();
 
 		}        
-		*/
+		
     }
 }
