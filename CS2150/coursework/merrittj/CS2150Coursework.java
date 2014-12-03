@@ -80,7 +80,6 @@ public class CS2150Coursework extends GraphicsLab
 		Vertex v6 = new Vertex(1.0f, 1.0f, 2.0f);
 		Vertex v7 = new Vertex(0.0f, 1.0f, 2.0f);
 		Vertex v8 = new Vertex(0.0f, 0.0f, 2.0f);	 
-
 		Vertex v9 = new Vertex(0.5f, 1.5f, 0.0f);
 		Vertex v10 = new Vertex(0.5f, 1.0f, 2.0f); 
 

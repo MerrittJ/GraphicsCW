@@ -30,25 +30,28 @@ public class ShapeDesigner extends AbstractDesigner {
 	/** Main method **/
 	public static void main(String args[])
     {   
-		new ShapeDesigner().run( WINDOWED, "Designer", 0.11f);
+		new ShapeDesigner().run( WINDOWED, "Designer", 0.01f);
     }
 	
 	/** Draw the shape **/
     protected void drawUnitShape()
     {
-    	Vertex v1 = new Vertex(0.0f, 0.0f, 0.0f);
-		Vertex v2 = new Vertex(0.0f, 1.0f, 0.0f);
-		Vertex v3 = new Vertex(1.0f, 1.0f, 0.0f);
-		Vertex v4 = new Vertex(1.0f, 0.0f, 0.0f);
-		Vertex v5 = new Vertex(1.0f, 0.0f, 2.0f);
-		Vertex v6 = new Vertex(1.0f, 1.0f, 2.0f);
-		Vertex v7 = new Vertex(0.0f, 1.0f, 2.0f);
-		Vertex v8 = new Vertex(0.0f, 0.0f, 2.0f);	 
+    	Vertex v1 = new Vertex(0.0f, 0.5f, 0.0f);
+		Vertex v2 = new Vertex(0.0f, 0.0f, 0.0f);
+		Vertex v3 = new Vertex(1.0f, 0.0f, 0.0f);
+		Vertex v4 = new Vertex(1.0f, 0.5f, 0.0f);
+		Vertex v5 = new Vertex(0.0f, 0.5f, 0.5f);
+		Vertex v6 = new Vertex(1.0f, 0.5f, 0.5f);
+		Vertex v7 = new Vertex(0.0f, 1.5f, 0.5f);
+		Vertex v8 = new Vertex(1.0f, 1.5f, 0.5f);	 
+		Vertex v9 = new Vertex(0.0f, 1.5f, 1.0f);
+		Vertex v10 = new Vertex(1.0f, 1.5f, 1.0f); 
+		Vertex v11 = new Vertex(1.0f, 0.0f, 1.0f);
+		Vertex v12 = new Vertex(1.0f, 0.5f, 0.5f);
+		Vertex v13 = new Vertex(0.0f, 0.0f, 0.5f);
+		Vertex v14 = new Vertex(1.0f, 0.0f, 0.5f);
 
-		Vertex v9 = new Vertex(0.5f, 1.5f, 0.0f);
-		Vertex v10 = new Vertex(0.5f, 1.0f, 2.0f); 
-
-		//near face of the body
+		//front of nose
 		GL11.glBegin(GL11.GL_POLYGON);
 		{
 			new Normal(v4.toVector(), v3.toVector(), v2.toVector(),
@@ -63,80 +66,134 @@ public class ShapeDesigner extends AbstractDesigner {
 		}
 		GL11.glEnd();
 
-		//rear face of the body
+		//top of nose
 		GL11.glBegin(GL11.GL_POLYGON);
 		{
-			new Normal(v8.toVector(), v7.toVector(), v6.toVector(),
+			new Normal(v6.toVector(), v4.toVector(), v1.toVector(),
 					v5.toVector()).submit();
 
 
-			v8.submit();
-			v7.submit();
 			v6.submit();
+			v4.submit();
+			v1.submit();
 			v5.submit();
 			
 		}
 		GL11.glEnd();
 		
-		//top right face of the body
+		//top of face
 		GL11.glBegin(GL11.GL_POLYGON);
 		{
-			new Normal(v3.toVector(), v6.toVector(), v10.toVector(),
-					v9.toVector()).submit();
+			new Normal(v8.toVector(), v6.toVector(), v5.toVector(),
+					v7.toVector()).submit();
 
-			v3.submit();
+			v8.submit();
 			v6.submit();
-			v10.submit();
-			v9.submit();
+			v5.submit();
+			v7.submit();
 
 			GL11.glEnd();
 
 		}
 		
-		//top left face of the body
+		//top of head
 		GL11.glBegin(GL11.GL_POLYGON);
 		{
-			new Normal(v2.toVector(), v7.toVector(), v10.toVector(),
+			new Normal(v10.toVector(), v8.toVector(), v7.toVector(),
 					v9.toVector()).submit();
 
 
 
-			v2.submit();
-			v7.submit();
 			v10.submit();
-			v9.submit();
-
-			GL11.glEnd();
-
-		}
-
-		//bottom of the body
-		GL11.glBegin(GL11.GL_POLYGON);
-		{
-			new Normal(v4.toVector(), v1.toVector(), v8.toVector(),
-					v5.toVector()).submit();
-
-			v4.submit();
-			v1.submit();
 			v8.submit();
-			v5.submit();
+			v7.submit();
+			v9.submit();
 
 			GL11.glEnd();
 
 		}
 
-		//front top of the body
+		//back of head
 		GL11.glBegin(GL11.GL_POLYGON);
 		{
-			new Normal(v2.toVector(), v3.toVector(), v9.toVector()).submit();
+			new Normal(v11.toVector(), v12.toVector(), v9.toVector(), v10.toVector()).submit();
 
-			v2.submit();
-			v3.submit();
+			v11.submit();
+			v12.submit();
 			v9.submit();
+			v10.submit();
 
 			GL11.glEnd();
 
-		}        
+		}
+
+		//bottom of head
+		GL11.glBegin(GL11.GL_POLYGON);
+		{
+			new Normal(v11.toVector(), v3.toVector(), v2.toVector(), v12.toVector()).submit();
+
+			v11.submit();
+			v3.submit();
+			v2.submit();
+			v12.submit();
+			
+			GL11.glEnd();
+
+		}   
+		
+		// head left side
+		GL11.glBegin(GL11.GL_POLYGON);
+		{
+			new Normal(v9.toVector(), v12.toVector(), v13.toVector(), v7.toVector()).submit();
+
+			v9.submit();
+			v12.submit();
+			v13.submit();
+			v7.submit();
+			
+			GL11.glEnd();
+
+		}  
+		
+		// head right side 
+		GL11.glBegin(GL11.GL_POLYGON);
+		{
+			new Normal(v10.toVector(), v8.toVector(), v14.toVector(), v11.toVector()).submit();
+
+			v10.submit();
+			v8.submit();
+			v14.submit();
+			v11.submit();
+			
+			GL11.glEnd();
+
+		}   
+		// snout right side 
+				GL11.glBegin(GL11.GL_POLYGON);
+				{
+					new Normal(v14.toVector(), v3.toVector(), v4.toVector(), v6.toVector()).submit();
+
+					v14.submit();
+					v3.submit();
+					v4.submit();
+					v6.submit();
+					
+					GL11.glEnd();
+
+				}        
+				// snout left side 
+				GL11.glBegin(GL11.GL_POLYGON);
+				{
+					new Normal(v13.toVector(), v2.toVector(), v1.toVector(), v5.toVector()).submit();
+
+					v13.submit();
+					v2.submit();
+					v1.submit();
+					v5.submit();
+					
+					GL11.glEnd();
+
+				}        
 		
     }
 }
