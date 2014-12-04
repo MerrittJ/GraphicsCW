@@ -32,168 +32,103 @@ public class ShapeDesigner extends AbstractDesigner {
 
 	/** Draw the shape **/
 	protected void drawUnitShape() {
-		Vertex v1 = new Vertex(0.0f, 0.5f, 0.0f);
-		Vertex v2 = new Vertex(0.0f, 0.0f, 0.0f);
-		Vertex v3 = new Vertex(1.0f, 0.0f, 0.0f);
-		Vertex v4 = new Vertex(1.0f, 0.5f, 0.0f);
-		Vertex v5 = new Vertex(0.0f, 0.5f, 0.5f);
-		Vertex v6 = new Vertex(1.0f, 0.5f, 0.5f);
-		Vertex v7 = new Vertex(0.0f, 1.5f, 0.5f);
-		Vertex v8 = new Vertex(1.0f, 1.5f, 0.5f);
-		Vertex v9 = new Vertex(0.0f, 1.5f, 1.0f);
-		Vertex v10 = new Vertex(1.0f, 1.5f, 1.0f);
-		Vertex v11 = new Vertex(1.0f, 0.0f, 1.0f);
-		Vertex v12 = new Vertex(1.0f, 0.5f, 0.5f);
+		
+		Vertex v1 = new Vertex(0.0f, 0.0f, 0.0f);
+		Vertex v2 = new Vertex(0.25f, 0.0f, 0.0f);
+		Vertex v3 = new Vertex(0.25f, 0.75f, 0.0f);
+		Vertex v4 = new Vertex(0.0f, 0.75f, 0.0f);
+		Vertex v5 = new Vertex(0.25f, 0.75f, 4.0f);
+		Vertex v6 = new Vertex(0.25f, 0.0f, 4.0f);
+		Vertex v7 = new Vertex(0.0f, 0.0f, 4.0f);
+		Vertex v8 = new Vertex(0.0f, 0.75f, 4.0f);
 
-		// front of nose
+		// front of beam
 		GL11.glBegin(GL11.GL_POLYGON);
 		{
 //			new Normal(v4.toVector(), v3.toVector(), v2.toVector(),
 //					v1.toVector()).submit();
 
-			v4.submit();
-			v3.submit();
-			v2.submit();
 			v1.submit();
+			v2.submit();
+			v3.submit();
+			v4.submit();
 
 		}
 		GL11.glEnd();
 
-		// top of nose
+		// top of beam
 		GL11.glBegin(GL11.GL_POLYGON);
 		{
 //			new Normal(v6.toVector(), v4.toVector(), v1.toVector(),
 //					v5.toVector()).submit();
 
-			v6.submit();
 			v4.submit();
-			v1.submit();
+			v3.submit();
 			v5.submit();
+			v8.submit();
 
 		}
 		GL11.glEnd();
 
-		// top of face
+		// back of beam
 		GL11.glBegin(GL11.GL_POLYGON);
 		{
 //			new Normal(v8.toVector(), v6.toVector(), v5.toVector(),
 //					v7.toVector()).submit();
 
-			v8.submit();
-			v6.submit();
 			v5.submit();
+			v6.submit();
 			v7.submit();
+			v8.submit();
 
 			GL11.glEnd();
 
 		}
 
-		// top of head
+		// bottom of beam
 		GL11.glBegin(GL11.GL_POLYGON);
 		{
 //			new Normal(v10.toVector(), v8.toVector(), v7.toVector(),
 //					v9.toVector()).submit();
 
-			v10.submit();
-			v8.submit();
+			v6.submit();
+			v2.submit();
+			v1.submit();
 			v7.submit();
-			v9.submit();
 
 			GL11.glEnd();
 
 		}
 
-		// back of head
+		// right side of beam
 		GL11.glBegin(GL11.GL_POLYGON);
 		{
 //			new Normal(v11.toVector(), v12.toVector(), v9.toVector(),
 //					v10.toVector()).submit();
 
-			v10.submit();
-			v11.submit();
-			v12.submit();
-			v9.submit();
+			v3.submit();
+			v2.submit();
+			v6.submit();
+			v5.submit();
 
 			GL11.glEnd();
 
 		}
 
-		// bottom of head
+		// left side of beam
 		GL11.glBegin(GL11.GL_POLYGON);
 		{
 //			new Normal(v11.toVector(), v3.toVector(), v2.toVector(),
 //					v12.toVector()).submit();
 
-			v11.submit();
-			v3.submit();
-			v2.submit();
-			v12.submit();
-
-			GL11.glEnd();
-
-		}
-
-		// head left side
-		GL11.glBegin(GL11.GL_POLYGON);
-		{
-//			new Normal(v9.toVector(), v12.toVector(), v13.toVector(),
-//					v7.toVector()).submit();
-
-			v9.submit();
-			v12.submit();
-			v2.submit();
-			v1.submit();
-			v5.submit();
-			v7.submit();
-
-			GL11.glEnd();
-
-		}
-
-		// head right side
-		GL11.glBegin(GL11.GL_POLYGON);
-		{
-//			new Normal(v10.toVector(), v11.toVector(), v14.toVector(),
-//					v8.toVector()).submit();
-
-			v10.submit();
-			v11.submit();
-			v3.submit();
-			v4.submit();
-			v6.submit();
 			v8.submit();
+			v7.submit();
+			v1.submit();
+			v4.submit();
 
 			GL11.glEnd();
 
 		}
-//		// snout right side
-//		GL11.glBegin(GL11.GL_POLYGON);
-//		{
-//			new Normal(v14.toVector(), v3.toVector(), v4.toVector(),
-//					v6.toVector()).submit();
-//
-//			v14.submit();
-//			v3.submit();
-//			v4.submit();
-//			v6.submit();
-//
-//			GL11.glEnd();
-//
-//		}
-//		// snout left side
-//		GL11.glBegin(GL11.GL_POLYGON);
-//		{
-//			new Normal(v13.toVector(), v2.toVector(), v1.toVector(),
-//					v5.toVector()).submit();
-//
-//			v13.submit();
-//			v2.submit();
-//			v1.submit();
-//			v5.submit();
-//
-//			GL11.glEnd();
-//
-//		}
 
 	}
 }
