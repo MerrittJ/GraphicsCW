@@ -32,7 +32,7 @@ public class ShapeDesigner extends AbstractDesigner {
 
 	/** Draw the shape **/
 	protected void drawUnitShape() {
-		
+
 		Vertex v1 = new Vertex(0.0f, 0.5f, 0.0f);
 		Vertex v2 = new Vertex(0.0f, 0.0f, 0.0f);
 		Vertex v3 = new Vertex(1.0f, 0.0f, 0.0f);
@@ -44,7 +44,9 @@ public class ShapeDesigner extends AbstractDesigner {
 		Vertex v9 = new Vertex(0.0f, 1.5f, 1.0f);
 		Vertex v10 = new Vertex(1.0f, 1.5f, 1.0f);
 		Vertex v11 = new Vertex(1.0f, 0.0f, 1.0f);
-		Vertex v12 = new Vertex(1.0f, 0.5f, 0.5f);
+		Vertex v12 = new Vertex(1.0f, 0.5f, 0.5f);		
+		Vertex v13 = new Vertex(0.0f, 0.0f, 0.5f);
+		Vertex v14 = new Vertex(1.0f, 0.0f, 0.5f);
 
 		// front of nose
 		GL11.glBegin(GL11.GL_POLYGON);
@@ -142,10 +144,10 @@ public class ShapeDesigner extends AbstractDesigner {
 
 			v9.submit();
 			v12.submit();
-			v2.submit();
-			v1.submit();
-			v5.submit();
+			v13.submit();
 			v7.submit();
+			//v5.submit();
+			//v7.submit();
 
 			GL11.glEnd();
 
@@ -157,12 +159,42 @@ public class ShapeDesigner extends AbstractDesigner {
 			// new Normal(v10.toVector(), v11.toVector(), v14.toVector(),
 			// v8.toVector()).submit();
 
-			v10.submit();
 			v11.submit();
-			v3.submit();
-			v4.submit();
-			v6.submit();
+			v10.submit();
 			v8.submit();
+			v14.submit();
+			//v6.submit();
+			//v8.submit();
+
+			GL11.glEnd();
+
+		}
+		
+		// snout right side
+		GL11.glBegin(GL11.GL_POLYGON);
+		{
+			// new Normal(v10.toVector(), v11.toVector(), v14.toVector(),
+			// v8.toVector()).submit();
+
+			v14.submit();
+			v6.submit();
+			v4.submit();
+			v3.submit();
+
+			GL11.glEnd();
+
+		}
+		
+		// snout left side
+		GL11.glBegin(GL11.GL_POLYGON);
+		{
+			// new Normal(v10.toVector(), v11.toVector(), v14.toVector(),
+			// v8.toVector()).submit();
+
+			v13.submit();
+			v2.submit();
+			v1.submit();
+			v5.submit();
 
 			GL11.glEnd();
 
