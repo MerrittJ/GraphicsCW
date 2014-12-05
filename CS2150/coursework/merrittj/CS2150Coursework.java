@@ -47,10 +47,18 @@ public class CS2150Coursework extends GraphicsLab {
     
     //boolean to check if bull enraged
     private boolean bullEnraged;
+    //current Y position of bull body
+    private int bullBodyPositionY;
+    //max Y position of bull body
+    private int maxBullBodyPositionY;
+    //current angle of bull head
+    private int bullHeadPosition;
+    //max angle of bull head
+    private int maxBullHeadPosition;
     
     //id for ground plane texture
     private Texture groundTexture;
-    
+    //
     
 	public static void main(String args[]) {
 		new CS2150Coursework().run(WINDOWED, "CS2150 Coursework Submission",
@@ -126,6 +134,14 @@ public class CS2150Coursework extends GraphicsLab {
 		// that your animations
 		// can be made faster or slower depending on the machine you are working
 		// on
+		
+		if (bullEnraged && bullHeadPosition < maxBullHeadPosition) {
+			//increment bullHeadPosition
+		}
+		else if(headDown && bullBodyPositionY < maxBullBodyPositionY) {
+			//increment bullBodyPosition
+		}
+		else if(headDown && legsMoving?)
 	}
 
 	protected void renderScene() {
@@ -134,6 +150,61 @@ public class CS2150Coursework extends GraphicsLab {
 		// this method!
 		// It will probably call a number of other
 		// methods you will write.
+		
+		//draw the ground plane
+        GL11.glPushMatrix();
+        {
+            //disable lighting calculations 
+            GL11.glPushAttrib(GL11.GL_LIGHTING_BIT);
+            GL11.glDisable(GL11.GL_LIGHTING);
+            //change the geometry colour to white
+            Colour.WHITE.submit();
+            //enable texturing and bind ground texture
+            GL11.glEnable(GL11.GL_TEXTURE_2D);
+            GL11.glBindTexture(GL11.GL_TEXTURE_2D,groundTexture.getTextureID());
+            
+            //position ground plane
+            GL11.glTranslatef(0.0f,-1.0f,-10.0f);
+            //scale "
+            GL11.glScalef(25.0f, 1.0f, 20.0f);
+            //draw "
+            GL11.glCallList(planeList);
+            
+            //disable textures and reset local lighting changes
+            GL11.glDisable(GL11.GL_TEXTURE_2D);
+            GL11.glPopAttrib();
+        }
+        GL11.glPopMatrix();
+        
+      //draw the sky plane
+        GL11.glPushMatrix();
+        {
+            //disable lighting calculations 
+            GL11.glPushAttrib(GL11.GL_LIGHTING_BIT);
+            GL11.glDisable(GL11.GL_LIGHTING);
+            //change the geometry colour to cyan
+            Colour.CYAN.submit();
+            //enable texturing and bind ground texture
+//            GL11.glEnable(GL11.GL_TEXTURE_2D);
+//            GL11.glBindTexture(GL11.GL_TEXTURE_2D,groundTexture.getTextureID());
+            
+            //position sky plane
+            GL11.glTranslatef(0.0f,-1.0f,-10.0f);
+            //scale "
+            GL11.glScalef(25.0f, 1.0f, 20.0f);
+            //rotate " 90 deg
+            GL11.glRotatef(90.0f, 1.0f, 0.0f, 0.0f);
+            //draw "
+            GL11.glCallList(planeList);
+            
+            //disable textures and reset local lighting changes
+            //GL11.glDisable(GL11.GL_TEXTURE_2D);
+            GL11.glPopAttrib();
+        }
+        GL11.glPopMatrix();
+        
+        
+
 	}
 
 	protected void setSceneCamera() {
@@ -148,7 +219,8 @@ public class CS2150Coursework extends GraphicsLab {
 		// using a call to GL11.gluLookAt(...)
 	}
 
-	protected void cleanupScene() {// TODO: Clean up your resources here
+	protected void cleanupScene() {
+		// TODO: Clean up your resources here
 	}
 
 	protected void drawUnitBullHead() {
