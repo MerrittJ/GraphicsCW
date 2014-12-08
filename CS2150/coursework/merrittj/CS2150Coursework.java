@@ -10,7 +10,9 @@
 package coursework.merrittj;
 
 import org.lwjgl.opengl.GL11;
+import org.lwjgl.util.glu.Cylinder;
 import org.lwjgl.util.glu.GLU;
+import org.lwjgl.util.glu.Sphere;
 import org.lwjgl.input.Keyboard;
 import org.newdawn.slick.opengl.Texture;
 
@@ -47,14 +49,54 @@ public class CS2150Coursework extends GraphicsLab {
     
     //boolean to check if bull enraged
     private boolean bullEnraged;
+    //boolean to check if headDown
+    private boolean headDown;
+    
     //current Y position of bull body
-    private int bullBodyPositionY;
-    //max Y position of bull body
-    private int maxBullBodyPositionY;
+    private int currentBodyPositionY;
+    //max
+    private int maxBodyPositionY;
+    //res
+    private int restBodyPositionY = 0;
+    
     //current angle of bull head
-    private int bullHeadPosition;
-    //max angle of bull head
-    private int maxBullHeadPosition;
+    private int currentHeadPosition;
+    //max (ie fully down)
+    private int maxHeadPosition;
+    //rest
+    private int restHeadPosition = 0;
+    
+  //boolean to check if fore legs going forward (i.e true means going forward, false means going backward
+    private boolean foreLegsGoingForward;
+    //current angle of fore legs
+    private int currentForeLegsPosition;
+    //max
+    private int maxForeLegsPosition = 0;
+    //min
+    private int minForeLegsPosition = 0;
+    //rest
+    private int restForeLegsPosition = 0;
+    
+    //boolean to check if rear legs going forward (i.e true means going forward, false means going backward
+    private boolean rearLegsGoingForward;
+    //current angle of rear legs
+    private int currentRearLegsPosition;
+    //max
+    private int maxRearLegsPosition = 0;
+    //min
+    private int minRearLegsPosition = 0;
+    //rest
+    private int restRearLegsPosition = 0;
+    
+    //boolean to check if beam is hit
+    private boolean beamHit;
+    //current angle of beam
+    private int currentBeamPosition;
+    //max 
+    private int maxBeamPosition;
+    //rest
+    private int restBeamPosition;
+
     
     //id for ground plane texture
     private Texture groundTexture;
@@ -69,15 +111,15 @@ public class CS2150Coursework extends GraphicsLab {
 		// TODO: finish texture loading and mess with lighting
 		
 		//load textures
-		//groundTexture = loadTexture("");
+		groundTexture = loadTexture("coursework/merrittj/textures/grass.jpg");
 		
 		//global ambient light
-		float globalAmbient[] = {0.3f, 0.3f, 0.3f, 1.0f};
+		float globalAmbient[] = {0.9f, 0.9f, 0.9f, 1.0f};
 		//set global ambient light
 		GL11.glLightModel(GL11.GL_LIGHT_MODEL_AMBIENT, FloatBuffer.wrap(globalAmbient));
 		
 		//first light for the scene is xxxxx
-		float diffuse0[] = {0.2f, 0.2f, 0.2f, 1.0f};
+		float diffuse0[] = {0.8f, 0.8f, 0.8f, 1.0f};
 		//with xxx ambient
 		float ambient0[] = {0.05f, 0.05f, 0.05f, 1.0f};
 		//with position above viewpoint?
@@ -119,11 +161,12 @@ public class CS2150Coursework extends GraphicsLab {
 		// input here
 		
 		if(Keyboard.isKeyDown(Keyboard.KEY_R))
-        {   bullEnraged = true;
+        {   
+			bullEnraged = true;
         }
 		else if(Keyboard.isKeyDown(Keyboard.KEY_SPACE))
-        {   resetAnimations();
-        	bullEnraged = false;
+        {   
+			resetAnimations();
         }
 	}
 
@@ -135,13 +178,29 @@ public class CS2150Coursework extends GraphicsLab {
 		// can be made faster or slower depending on the machine you are working
 		// on
 		
-		if (bullEnraged && bullHeadPosition < maxBullHeadPosition) {
-			//increment bullHeadPosition
+		if (bullEnraged && currentHeadPosition < maxHeadPosition) {
+			//increment currentHeadPosition
+			//increment colour red
 		}
-		else if(headDown && bullBodyPositionY < maxBullBodyPositionY) {
-			//increment bullBodyPosition
+		else if(headDown && currentBodyPositionY < maxBodyPositionY) {
+			//increment currentBodyPosition and move legs
 		}
-		else if(headDown && legsMoving?)
+		else if(foreLegsGoingForward && currentForeLegsPosition > maxForeLegsPosition) {
+			//increment fore legs forward
+		}
+		else if(rearLegsGoingForward && currentRearLegsPosition > maxRearLegsPosition) {
+			//increment rear legs forward
+		}
+		else if(!foreLegsGoingForward && currentForeLegsPosition < maxForeLegsPosition) {
+			//increment fore legs backward
+		}
+		else if(!rearLegsGoingForward && currentRearLegsPosition < maxRearLegsPosition) {
+			//increment rear legs backward
+		}
+		else if(beamHit) {
+			//rotate beam about a touching pole
+		}
+		
 	}
 
 	protected void renderScene() {
@@ -203,8 +262,148 @@ public class CS2150Coursework extends GraphicsLab {
         }
         GL11.glPopMatrix();
         
-        
+     // draw sun
+        GL11.glPushMatrix();
+        {
+            //sun shininess
+            float sunFrontShininess  = 2.0f;
+            //sun reflection
+            float sunFrontSpecular[] = {0.6f, 0.6f, 0.6f, 1.0f};
+            //sun diffuse
+            float sunFrontDiffuse[]  = {0.6f, 0.6f, 0.6f, 1.0f};
 
+            //set sun material properties
+            GL11.glMaterialf(GL11.GL_FRONT, GL11.GL_SHININESS, sunFrontShininess);
+            GL11.glMaterial(GL11.GL_FRONT, GL11.GL_SPECULAR, FloatBuffer.wrap(sunFrontSpecular));
+            GL11.glMaterial(GL11.GL_FRONT, GL11.GL_DIFFUSE, FloatBuffer.wrap(sunFrontDiffuse));
+
+            //position then draw sun
+            GL11.glTranslatef(4.0f, 20.0f, -19.0f);
+            new Sphere().draw(0.5f,10,10);
+        }
+        GL11.glPopMatrix();
+
+        //draw poles
+        GL11.glPushMatrix();
+        {
+            //pole shininess
+            float poleFrontShininess  = 2.0f;
+            //pole reflection
+            float poleFrontSpecular[] = {0.6f, 0.6f, 0.6f, 1.0f};
+            //pole diffuse
+            float poleFrontDiffuse[]  = {0.6f, 0.6f, 0.6f, 1.0f};
+
+            //set pole material properties
+            GL11.glMaterialf(GL11.GL_FRONT, GL11.GL_SHININESS, poleFrontShininess);
+            GL11.glMaterial(GL11.GL_FRONT, GL11.GL_SPECULAR, FloatBuffer.wrap(poleFrontSpecular));
+            GL11.glMaterial(GL11.GL_FRONT, GL11.GL_DIFFUSE, FloatBuffer.wrap(poleFrontDiffuse));
+
+            //TODO
+            //position then draw pole #1
+            GL11.glTranslatef(4.0f, 20.0f, -19.0f);
+            new Cylinder().draw(0.5f,0.5f,0.5f,10,10);
+            //position then draw pole #2
+            GL11.glTranslatef(4.0f, 20.0f, -19.0f);
+            new Cylinder().draw(0.5f,0.5f,0.5f,10,10);
+            //position then draw pole #3
+            GL11.glTranslatef(4.0f, 20.0f, -19.0f);
+            new Cylinder().draw(0.5f,0.5f,0.5f,10,10);
+            //position then draw pole #4
+            GL11.glTranslatef(4.0f, 20.0f, -19.0f);
+            new Cylinder().draw(0.5f,0.5f,0.5f,10,10);
+            
+        }
+        GL11.glPopMatrix();
+        
+      //draw beams
+        GL11.glPushMatrix();
+        {
+            //beam shininess
+            float beamFrontShininess  = 2.0f;
+            //beam reflection
+            float beamFrontSpecular[] = {0.6f, 0.6f, 0.6f, 1.0f};
+            //beam diffuse
+            float beamFrontDiffuse[]  = {0.6f, 0.6f, 0.6f, 1.0f};
+
+            //set beam material properties
+            GL11.glMaterialf(GL11.GL_FRONT, GL11.GL_SHININESS, beamFrontShininess);
+            GL11.glMaterial(GL11.GL_FRONT, GL11.GL_SPECULAR, FloatBuffer.wrap(beamFrontSpecular));
+            GL11.glMaterial(GL11.GL_FRONT, GL11.GL_DIFFUSE, FloatBuffer.wrap(beamFrontDiffuse));
+
+            //TODO
+            //position then draw beam #1
+            GL11.glTranslatef(4.0f, 10.0f, -19.0f);
+            GL11.glCallList(beamList);           
+            //position then draw beam #2
+            GL11.glTranslatef(4.0f, 20.0f, -19.0f);
+            GL11.glCallList(beamList);            
+            //position then draw beam #3
+            GL11.glTranslatef(4.0f, 30.0f, -19.0f);
+            GL11.glCallList(beamList);            
+            //position then draw beam #4
+            GL11.glTranslatef(4.0f, 40.0f, -19.0f);
+            GL11.glCallList(beamList);            
+        }
+        GL11.glPopMatrix();
+        
+        //draw bull
+        GL11.glPushMatrix();
+        {
+            //bull shininess
+            float bullFrontShininess  = 2.0f;
+            //bull reflection
+            float bullFrontSpecular[] = {0.6f, 0.6f, 0.6f, 1.0f};
+            //bull diffuse
+            float bullFrontDiffuse[]  = {0.6f, 0.6f, 0.6f, 1.0f};
+
+            //set bull material properties since head, body, horns, and legs will all be the same
+            GL11.glMaterialf(GL11.GL_FRONT, GL11.GL_SHININESS, bullFrontShininess);
+            GL11.glMaterial(GL11.GL_FRONT, GL11.GL_SPECULAR, FloatBuffer.wrap(bullFrontSpecular));
+            GL11.glMaterial(GL11.GL_FRONT, GL11.GL_DIFFUSE, FloatBuffer.wrap(bullFrontDiffuse));
+
+            //TODO
+            //position then draw bull head
+            GL11.glTranslatef(4.0f, 10.0f, -19.0f);
+            GL11.glCallList(bullHeadList); 
+            //position then draw bull body
+            GL11.glTranslatef(4.0f, 10.0f, -19.0f);
+            GL11.glCallList(bullBodyList); 
+            
+            //position then draw bull horns
+            //right 
+            GL11.glTranslatef(4.0f, 10.0f, -19.0f);
+            GL11.glRotatef(35.0f, 0.0f, 1.0f, 0.0f);
+            new Cylinder().draw(0.5f,0.5f,0.5f,10,10); 
+            //left
+            GL11.glTranslatef(4.0f, 10.0f, -19.0f);
+            GL11.glRotatef(35.0f, 0.0f, 1.0f, 0.0f);
+            new Cylinder().draw(0.5f,0.5f,0.5f,10,10); 
+            
+            //position then draw bull legs 
+            //front right
+            GL11.glTranslatef(4.0f, 10.0f, -19.0f);
+            new Cylinder().draw(0.5f,0.5f,0.5f,10,10); 
+          //front left
+            GL11.glTranslatef(4.0f, 10.0f, -19.0f);
+            new Cylinder().draw(0.5f,0.5f,0.5f,10,10); 
+          //back right
+            GL11.glTranslatef(4.0f, 10.0f, -19.0f);
+            new Cylinder().draw(0.5f,0.5f,0.5f,10,10);  
+          //back left
+            GL11.glTranslatef(4.0f, 10.0f, -19.0f);
+            new Cylinder().draw(0.5f,0.5f,0.5f,10,10); 
+        }
+        GL11.glPopMatrix();  
+	}
+	
+	private void resetAnimations(){
+		bullEnraged = false;
+		currentBodyPositionY = restBodyPositionY;
+		currentHeadPosition = restHeadPosition;
+		currentForeLegsPosition = restForeLegsPosition;
+		currentRearLegsPosition = restRearLegsPosition;
+		currentBeamPosition = restBeamPosition;
+		
 	}
 
 	protected void setSceneCamera() {
@@ -504,10 +703,6 @@ public class CS2150Coursework extends GraphicsLab {
 		}
 	}
 
-	protected void drawUnitPole() {
-
-	}
-
 	protected void drawUnitBeam() {
 
 		Vertex v1 = new Vertex(0.0f, 0.0f, 0.0f);
@@ -628,7 +823,4 @@ public class CS2150Coursework extends GraphicsLab {
 		GL11.glEnd();
 	}
 
-	protected void drawUnitSun() {
-
-	}
 }
