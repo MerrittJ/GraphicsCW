@@ -111,7 +111,7 @@ public class CS2150Coursework extends GraphicsLab {
 		// TODO: finish texture loading and mess with lighting
 		
 		//load textures
-		groundTexture = loadTexture("coursework/merrittj/textures/grass.jpg");
+		groundTexture = loadTexture("coursework/merrittj/textures/grass.bmp");
 		
 		//global ambient light
 		float globalAmbient[] = {0.9f, 0.9f, 0.9f, 1.0f};
@@ -223,7 +223,7 @@ public class CS2150Coursework extends GraphicsLab {
             GL11.glBindTexture(GL11.GL_TEXTURE_2D,groundTexture.getTextureID());
             
             //position ground plane
-            GL11.glTranslatef(0.0f,-1.0f,-10.0f);
+            GL11.glTranslatef(0.0f,1.0f,-10.0f);
             //scale "
             GL11.glScalef(25.0f, 1.0f, 20.0f);
             //draw "
