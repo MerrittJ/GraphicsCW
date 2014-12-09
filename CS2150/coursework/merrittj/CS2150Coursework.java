@@ -45,7 +45,7 @@ public class CS2150Coursework extends GraphicsLab {
     //display list id for beam
     private final int beamList = 3;
     //display list id for planes
-    private final int planeList  = 7;
+    private final int planeList = 7;
     
     //boolean to check if bull enraged
     private boolean bullEnraged;
@@ -111,7 +111,7 @@ public class CS2150Coursework extends GraphicsLab {
 		// TODO: finish texture loading and mess with lighting
 		
 		//load textures
-		groundTexture = loadTexture("coursework/merrittj/textures/grass.bmp");
+		groundTexture = loadTexture("coursework/merrittj/textures/grass.jpg");
 		
 		//global ambient light
 		float globalAmbient[] = {0.9f, 0.9f, 0.9f, 1.0f};
@@ -223,7 +223,7 @@ public class CS2150Coursework extends GraphicsLab {
             GL11.glBindTexture(GL11.GL_TEXTURE_2D,groundTexture.getTextureID());
             
             //position ground plane
-            GL11.glTranslatef(0.0f,1.0f,-10.0f);
+            GL11.glTranslatef(0.0f,0.0f,-10.0f);
             //scale "
             GL11.glScalef(25.0f, 1.0f, 20.0f);
             //draw "
@@ -416,6 +416,7 @@ public class CS2150Coursework extends GraphicsLab {
 		// TODO: If it is appropriate for your scene, modify the camera's
 		// position and orientation here
 		// using a call to GL11.gluLookAt(...)
+		GLU.gluLookAt(0.0f, 0.7f, 12.0f, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f, 0.0f);
 	}
 
 	protected void cleanupScene() {
@@ -806,21 +807,50 @@ public class CS2150Coursework extends GraphicsLab {
 
 	protected void drawUnitPlane() {
 
-		Vertex v1 = new Vertex(0.0f, 0.0f, 0.0f);
-		Vertex v2 = new Vertex(1.0f, 0.0f, 0.0f);
-		Vertex v3 = new Vertex(1.0f, 0.0f, 1.0f);
-		Vertex v4 = new Vertex(0.0f, 0.0f, 1.0f);
-
-		// top of plane
-		GL11.glBegin(GL11.GL_POLYGON);
-		{
-			v1.submit();
-			v2.submit();
-			v3.submit();
-			v4.submit();
-
-		}
-		GL11.glEnd();
+	        Vertex v1 = new Vertex(-0.5f, 0.0f,-0.5f); // left,  back
+	        Vertex v2 = new Vertex( 0.5f, 0.0f,-0.5f); // right, back
+	        Vertex v3 = new Vertex( 0.5f, 0.0f, 0.5f); // right, front
+	        Vertex v4 = new Vertex(-0.5f, 0.0f, 0.5f); // left,  front
+	        
+	        // draw the plane geometry. order the vertices so that the plane faces up
+	        GL11.glBegin(GL11.GL_POLYGON);
+	        {
+	            new Normal(v4.toVector(),v3.toVector(),v2.toVector(),v1.toVector()).submit();
+	            
+	            GL11.glTexCoord2f(0.0f,0.0f);
+	            v4.submit();
+	            
+	            GL11.glTexCoord2f(1.0f,0.0f);
+	            v3.submit();
+	            
+	            GL11.glTexCoord2f(1.0f,1.0f);
+	            v2.submit();
+	            
+	            GL11.glTexCoord2f(0.0f,1.0f);
+	            v1.submit();
+	        }
+	        GL11.glEnd();
+	        
+	        // if the user is viewing an axis, then also draw this plane
+	        // using lines so that axis aligned planes can still be seen
+	        if(isViewingAxis())
+	        {
+	            // also disable textures when drawing as lines
+	            // so that the lines can be seen more clearly
+	            GL11.glPushAttrib(GL11.GL_TEXTURE_2D);
+	            GL11.glDisable(GL11.GL_TEXTURE_2D);
+	            GL11.glBegin(GL11.GL_LINE_LOOP);
+	            {
+	                v4.submit();
+	                v3.submit();
+	                v2.submit();
+	                v1.submit();
+	            }
+	            GL11.glEnd();
+	            GL11.glPopAttrib();
+	        }
+	    
+		
 	}
 
 }
