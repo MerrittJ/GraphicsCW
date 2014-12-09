@@ -45,7 +45,7 @@ public class CS2150Coursework extends GraphicsLab {
     //display list id for beam
     private final int beamList = 3;
     //display list id for planes
-    private final int planeList = 7;
+    private final int planeList = 4;
     
     //boolean to check if bull enraged
     private boolean bullEnraged;
@@ -100,7 +100,8 @@ public class CS2150Coursework extends GraphicsLab {
     
     //id for ground plane texture
     private Texture groundTexture;
-    //
+    //id for sky texture
+    private Texture skyTexture;
     
 	public static void main(String args[]) {
 		new CS2150Coursework().run(WINDOWED, "CS2150 Coursework Submission",
@@ -112,6 +113,7 @@ public class CS2150Coursework extends GraphicsLab {
 		
 		//load textures
 		groundTexture = loadTexture("coursework/merrittj/textures/grass.jpg");
+		skyTexture = loadTexture("coursework/merrittj/textures/360sky.jpg");
 		
 		//global ambient light
 		float globalAmbient[] = {0.9f, 0.9f, 0.9f, 1.0f};
@@ -121,7 +123,7 @@ public class CS2150Coursework extends GraphicsLab {
 		//first light for the scene is xxxxx
 		float diffuse0[] = {0.8f, 0.8f, 0.8f, 1.0f};
 		//with xxx ambient
-		float ambient0[] = {0.05f, 0.05f, 0.05f, 1.0f};
+		float ambient0[] = {0.9f, 0.9f, 0.9f, 1.0f};
 		//with position above viewpoint?
 		float position0[] = {0.0f, 10.0f, 0.0f, 1.0f};
 		
@@ -217,15 +219,15 @@ public class CS2150Coursework extends GraphicsLab {
             GL11.glPushAttrib(GL11.GL_LIGHTING_BIT);
             GL11.glDisable(GL11.GL_LIGHTING);
             //change the geometry colour to white
-            Colour.WHITE.submit();
+            Colour.BLUE.submit();
             //enable texturing and bind ground texture
-            GL11.glEnable(GL11.GL_TEXTURE_2D);
-            GL11.glBindTexture(GL11.GL_TEXTURE_2D,groundTexture.getTextureID());
+           // GL11.glEnable(GL11.GL_TEXTURE_2D);
+          //  GL11.glBindTexture(GL11.GL_TEXTURE_2D,groundTexture.getTextureID());
             
             //position ground plane
-            GL11.glTranslatef(0.0f,0.0f,-10.0f);
+            GL11.glTranslatef(0.0f, 0.0f, -10.0f);
             //scale "
-            GL11.glScalef(25.0f, 1.0f, 20.0f);
+            GL11.glScalef(50.0f, 50.0f, 50.0f);
             //draw "
             GL11.glCallList(planeList);
             
@@ -241,16 +243,16 @@ public class CS2150Coursework extends GraphicsLab {
             //disable lighting calculations 
             GL11.glPushAttrib(GL11.GL_LIGHTING_BIT);
             GL11.glDisable(GL11.GL_LIGHTING);
-            //change the geometry colour to cyan
-            Colour.CYAN.submit();
-            //enable texturing and bind ground texture
-//            GL11.glEnable(GL11.GL_TEXTURE_2D);
-//            GL11.glBindTexture(GL11.GL_TEXTURE_2D,groundTexture.getTextureID());
+            //change the geometry colour to white
+            Colour.WHITE.submit();
+            //enable texturing and bind sky texture
+            GL11.glEnable(GL11.GL_TEXTURE_2D);
+            GL11.glBindTexture(GL11.GL_TEXTURE_2D,skyTexture.getTextureID());
             
             //position sky plane
-            GL11.glTranslatef(0.0f,-1.0f,-10.0f);
+            GL11.glTranslatef(8.0f, 4.0f, -10.0f);
             //scale "
-            GL11.glScalef(25.0f, 1.0f, 20.0f);
+            GL11.glScalef(50.0f, 11.5f, 40.0f);
             //rotate " 90 deg
             GL11.glRotatef(90.0f, 1.0f, 0.0f, 0.0f);
             //draw "
@@ -268,9 +270,9 @@ public class CS2150Coursework extends GraphicsLab {
             //sun shininess
             float sunFrontShininess  = 2.0f;
             //sun reflection
-            float sunFrontSpecular[] = {0.6f, 0.6f, 0.6f, 1.0f};
+            float sunFrontSpecular[] = {0.1f, 0.1f, 0.1f, 1.0f};
             //sun diffuse
-            float sunFrontDiffuse[]  = {0.6f, 0.6f, 0.6f, 1.0f};
+            float sunFrontDiffuse[]  = {0.9f, 0.9f, 0.9f, 1.0f};
 
             //set sun material properties
             GL11.glMaterialf(GL11.GL_FRONT, GL11.GL_SHININESS, sunFrontShininess);
@@ -278,8 +280,8 @@ public class CS2150Coursework extends GraphicsLab {
             GL11.glMaterial(GL11.GL_FRONT, GL11.GL_DIFFUSE, FloatBuffer.wrap(sunFrontDiffuse));
 
             //position then draw sun
-            GL11.glTranslatef(4.0f, 20.0f, -19.0f);
-            new Sphere().draw(0.5f,10,10);
+            GL11.glTranslatef(-4.5f, 4.0f, 1.0f);
+            new Sphere().draw(0.25f,50,10);
         }
         GL11.glPopMatrix();
 
@@ -299,18 +301,21 @@ public class CS2150Coursework extends GraphicsLab {
             GL11.glMaterial(GL11.GL_FRONT, GL11.GL_DIFFUSE, FloatBuffer.wrap(poleFrontDiffuse));
 
             //TODO
+            //rotate all poles upright
+            GL11.glRotatef(90.0f, 1.5f, 0.0f, 0.0f);
+            
             //position then draw pole #1
-            GL11.glTranslatef(4.0f, 20.0f, -19.0f);
-            new Cylinder().draw(0.5f,0.5f,0.5f,10,10);
+            GL11.glTranslatef(2.0f, -2.0f, -1.5f);
+            new Cylinder().draw(0.125f,0.125f,1.5f,50,10);
             //position then draw pole #2
-            GL11.glTranslatef(4.0f, 20.0f, -19.0f);
-            new Cylinder().draw(0.5f,0.5f,0.5f,10,10);
+            GL11.glTranslatef(-4.0f, 0.0f, 0.0f);
+            new Cylinder().draw(0.125f,0.125f,1.5f,50,10);
             //position then draw pole #3
-            GL11.glTranslatef(4.0f, 20.0f, -19.0f);
-            new Cylinder().draw(0.5f,0.5f,0.5f,10,10);
+            GL11.glTranslatef(4.0f, 4.0f, 0.0f);
+            new Cylinder().draw(0.125f,0.125f,1.5f,50,10);
             //position then draw pole #4
-            GL11.glTranslatef(4.0f, 20.0f, -19.0f);
-            new Cylinder().draw(0.5f,0.5f,0.5f,10,10);
+            GL11.glTranslatef(-4.0f, 0.0f, 0.0f);
+            new Cylinder().draw(0.125f,0.125f,1.5f,50,10);
             
         }
         GL11.glPopMatrix();
@@ -331,17 +336,22 @@ public class CS2150Coursework extends GraphicsLab {
             GL11.glMaterial(GL11.GL_FRONT, GL11.GL_DIFFUSE, FloatBuffer.wrap(beamFrontDiffuse));
 
             //TODO
+            
+           // GL11.glScalef(0.0f, 10.0f, 0.0f);
+            
             //position then draw beam #1
-            GL11.glTranslatef(4.0f, 10.0f, -19.0f);
+            GL11.glTranslatef(1.87f, 0.3f, -2.0f);
             GL11.glCallList(beamList);           
             //position then draw beam #2
-            GL11.glTranslatef(4.0f, 20.0f, -19.0f);
-            GL11.glCallList(beamList);            
+            GL11.glTranslatef(-4.0f, 0.0f, 0.0f);
+            GL11.glCallList(beamList);  
+            //rotate beams
+            GL11.glRotatef(90.0f, 0.0f, 1.5f, 0.0f);
             //position then draw beam #3
-            GL11.glTranslatef(4.0f, 30.0f, -19.0f);
+            GL11.glTranslatef(-0.25f, 0.0f, 0.0f);
             GL11.glCallList(beamList);            
             //position then draw beam #4
-            GL11.glTranslatef(4.0f, 40.0f, -19.0f);
+            GL11.glTranslatef(-4.0f, 0.0f, 0.0f);
             GL11.glCallList(beamList);            
         }
         GL11.glPopMatrix();
@@ -812,7 +822,7 @@ public class CS2150Coursework extends GraphicsLab {
 	        Vertex v3 = new Vertex( 0.5f, 0.0f, 0.5f); // right, front
 	        Vertex v4 = new Vertex(-0.5f, 0.0f, 0.5f); // left,  front
 	        
-	        // draw the plane geometry. order the vertices so that the plane faces up
+	        //draw plane
 	        GL11.glBegin(GL11.GL_POLYGON);
 	        {
 	            new Normal(v4.toVector(),v3.toVector(),v2.toVector(),v1.toVector()).submit();
@@ -831,13 +841,12 @@ public class CS2150Coursework extends GraphicsLab {
 	        }
 	        GL11.glEnd();
 	        
-	        // if the user is viewing an axis, then also draw this plane
-	        // using lines so that axis aligned planes can still be seen
+	        //if the user is viewing an axis, draw plane with lines
 	        if(isViewingAxis())
 	        {
-	            // also disable textures when drawing as lines
-	            // so that the lines can be seen more clearly
+	            
 	            GL11.glPushAttrib(GL11.GL_TEXTURE_2D);
+	            //disable textures
 	            GL11.glDisable(GL11.GL_TEXTURE_2D);
 	            GL11.glBegin(GL11.GL_LINE_LOOP);
 	            {

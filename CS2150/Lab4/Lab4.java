@@ -52,7 +52,7 @@ public class Lab4 extends GraphicsLab
         // set the global ambient lighting
         GL11.glLightModel(GL11.GL_LIGHT_MODEL_AMBIENT, FloatBuffer.wrap(globalAmbient));
 
-        /*
+        
         // the first light for the scene is white...
         float diffuse0[]  = { 0.6f,  0.6f, 0.6f, 1.0f};
         // ...with a dim ambient contribution...
@@ -67,7 +67,7 @@ public class Lab4 extends GraphicsLab
         GL11.glLight(GL11.GL_LIGHT0, GL11.GL_POSITION, FloatBuffer.wrap(position0));
         // enable the first light
         GL11.glEnable(GL11.GL_LIGHT0);
-        */
+        
 
 
         // enable lighting calculations
