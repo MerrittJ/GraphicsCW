@@ -50,7 +50,7 @@ public class CS2150Coursework extends GraphicsLab {
 	// boolean to check if bull enraged
 	private boolean bullEnraged;
 	// boolean to check if headDown
-	private boolean headDown = false;
+	private boolean headDown;
 
 	// current Y position of bull body
 	private float currentBodyPositionY;
@@ -70,25 +70,25 @@ public class CS2150Coursework extends GraphicsLab {
 	// forward, false means going backward
 	private boolean foreLegsGoingForward;
 	// current angle of fore legs
-	private int currentForeLegsPosition;
+	private float currentForeLegsAngle;
 	// max
-	private int maxForeLegsPosition = 0;
+	private float maxForeLegsAngle = 45.0f;
 	// min
-	private int minForeLegsPosition = 0;
+	private float minForeLegsAngle = -45.0f;
 	// rest
-	private int restForeLegsPosition = 0;
+	private float restForeLegsAngle = 0.0f;
 
 	// boolean to check if rear legs going forward (i.e true means going
 	// forward, false means going backward
 	private boolean rearLegsGoingForward;
 	// current angle of rear legs
-	private int currentRearLegsPosition;
+	private float currentRearLegsAngle;
 	// max
-	private int maxRearLegsPosition = 0;
+	private float maxRearLegsAngle = 45.0f;
 	// min
-	private int minRearLegsPosition = 0;
+	private float minRearLegsAngle = -45.0f;
 	// rest
-	private int restRearLegsPosition = 0;
+	private float restRearLegsAngle = 0.0f;
 
 	// boolean to check if beam is hit
 	private boolean beamHit;
@@ -195,27 +195,43 @@ public class CS2150Coursework extends GraphicsLab {
 			currentHeadAngle += 1.0f * getAnimationScale();
 			if (currentHeadAngle == maxHeadAngle) {
 				headDown = true;
+				foreLegsGoingForward = true;
+				rearLegsGoingForward = false;
 			}
 			// increment colour red
-		}  else if (bullEnraged && headDown && currentBodyPositionY < maxBodyPositionY) {
+		} else if ((currentHeadAngle == maxHeadAngle) && currentBodyPositionY < maxBodyPositionY) { // headDown
 			// increment currentBodyPosition and move legs
-			currentBodyPositionY -= 1.0f * getAnimationScale();
-			if (currentBodyPositionY == 10000.0f) {
+			currentBodyPositionY -= 0.1f * getAnimationScale();
+			if (currentBodyPositionY == -2.0f) {
 				beamHit = true;
+				
 			}
-		}  if (foreLegsGoingForward
-				&& currentForeLegsPosition > maxForeLegsPosition) {
+		}
+		if (foreLegsGoingForward
+				&& currentForeLegsAngle > maxForeLegsAngle) {
 			// increment fore legs forward
-		}  if (rearLegsGoingForward
-				&& currentRearLegsPosition > maxRearLegsPosition) {
+			currentForeLegsAngle += 1.0f * getAnimationScale();
+			if (currentForeLegsAngle == maxForeLegsAngle) {
+				foreLegsGoingForward = false;
+				rearLegsGoingForward = true;
+			}
+		}
+		if (rearLegsGoingForward
+				&& currentRearLegsAngle > maxRearLegsAngle) {
 			// increment rear legs forward
-		}  if (!foreLegsGoingForward
-				&& currentForeLegsPosition < maxForeLegsPosition) {
+			currentRearLegsAngle += 1.0f * getAnimationScale();
+		}
+		if (!foreLegsGoingForward
+				&& currentForeLegsAngle < maxForeLegsAngle) {
 			// increment fore legs backward
-		}  if (!rearLegsGoingForward
-				&& currentRearLegsPosition < maxRearLegsPosition) {
+			currentForeLegsAngle -= 1.0f * getAnimationScale();
+		}
+		if (!rearLegsGoingForward
+				&& currentRearLegsAngle < maxRearLegsAngle) {
 			// increment rear legs backward
-		}  if (beamHit) {
+			currentRearLegsAngle -= 1.0f * getAnimationScale();
+		}
+		if (beamHit) {
 			// rotate beam about a touching pole
 		}
 
@@ -374,20 +390,41 @@ public class CS2150Coursework extends GraphicsLab {
 				// position then draw bull legs
 				// rotate upright
 				GL11.glRotatef(90.0f, 1.5f, 0.0f, 0.0f);
-				// front right
-				new Cylinder().draw(0.125f, 0.125f, 0.8f, 10, 10);
 
-				// front left
-				GL11.glTranslatef(1.0f, 0.0f, 0.0f);
-				new Cylinder().draw(0.125f, 0.125f, 0.8f, 10, 10);
+				GL11.glPushMatrix();
+				{
+					// front right
+					GL11.glRotatef(currentForeLegsAngle, 1.0f, 0.0f, 0.0f);
+					new Cylinder().draw(0.125f, 0.125f, 0.8f, 10, 10);
+				}
+				GL11.glPopMatrix();
 
-				// back left
-				GL11.glTranslatef(0.0f, 2.0f, 0.0f);
-				new Cylinder().draw(0.125f, 0.125f, 0.8f, 10, 10);
+				GL11.glPushMatrix();
+				{
+					// front left
+					GL11.glTranslatef(1.0f, 0.0f, 0.0f);
+					GL11.glRotatef(currentForeLegsAngle, 1.0f, 0.0f, 0.0f);
+					new Cylinder().draw(0.125f, 0.125f, 0.8f, 10, 10);
+				}
+				GL11.glPopMatrix();
 
-				// back right
-				GL11.glTranslatef(-1.0f, 0.0f, 0.0f);
-				new Cylinder().draw(0.125f, 0.125f, 0.8f, 10, 10);
+				GL11.glPushMatrix();
+				{
+					// back left
+					GL11.glTranslatef(0.0f, 2.0f, 0.0f);
+					GL11.glRotatef(currentRearLegsAngle, 1.0f, 0.0f, 0.0f);
+					new Cylinder().draw(0.125f, 0.125f, 0.8f, 10, 10);
+				}
+				GL11.glPopMatrix();
+
+				GL11.glPushMatrix();
+				{
+					// back right
+					GL11.glTranslatef(1.0f, 2.0f, 0.0f);
+					GL11.glRotatef(currentRearLegsAngle, 1.0f, 0.0f, 0.0f);
+					new Cylinder().draw(0.125f, 0.125f, 0.8f, 10, 10);
+				}
+				GL11.glPopMatrix();
 
 			}
 			GL11.glPopMatrix();
@@ -541,57 +578,16 @@ public class CS2150Coursework extends GraphicsLab {
 
 			GL11.glPopMatrix();
 
-			// rotate all poles upright
-
-			// position then draw pole #1
-			// ;
-
-			// position then draw pole #2
-			// GL11.glTranslatef(-4.0f, 0.0f, 0.0f);
-			// new Cylinder().draw(0.125f, 0.125f, 1.5f, 50, 10);
-			// position then draw pole #3
-			// GL11.glTranslatef(4.0f, 4.0f, 0.0f);
-			// new Cylinder().draw(0.125f, 0.125f, 1.5f, 50, 10);
-			// position then draw pole #4
-			// GL11.glTranslatef(-4.0f, 0.0f, 0.0f);
-			// new Cylinder().draw(0.125f, 0.125f, 1.5f, 50, 10);
-
 		}
 		GL11.glPopMatrix();
-
-		// draw beams
-		GL11.glPushMatrix();
-		{
-
-			// TODO
-
-			// GL11.glScalef(0.0f, 10.0f, 0.0f);
-
-			// position then draw beam #1
-			// GL11.glTranslatef(1.87f, 0.3f, -2.0f);
-			// GL11.glCallList(beamList);
-			// position then draw beam #2
-			// GL11.glTranslatef(-4.0f, 0.0f, 0.0f);
-			// GL11.glCallList(beamList);
-			// rotate beams
-			// GL11.glRotatef(90.0f, 0.0f, 1.5f, 0.0f);
-			// position then draw beam #3
-			// GL11.glTranslatef(-0.1f, 0.0f, 0.125f);
-			// GL11.glCallList(beamList);
-			// position then draw beam #4
-			// GL11.glTranslatef(-4.05f, 0.0f, 0.0f);
-			// GL11.glCallList(beamList);
-		}
-		GL11.glPopMatrix();
-
 	}
 
 	private void resetAnimations() {
 		bullEnraged = false;
 		currentBodyPositionY = restBodyPositionY;
 		currentHeadAngle = restHeadAngle;
-		currentForeLegsPosition = restForeLegsPosition;
-		currentRearLegsPosition = restRearLegsPosition;
+		currentForeLegsAngle = restForeLegsAngle;
+		currentRearLegsAngle = restRearLegsAngle;
 		currentBeamAngle = restBeamAngle;
 
 	}
