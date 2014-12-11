@@ -50,12 +50,12 @@ public class CS2150Coursework extends GraphicsLab {
 	// boolean to check if bull enraged
 	private boolean bullEnraged;
 	// boolean to check if headDown
-	private boolean headDown;
+	private boolean headDown = false;
 
 	// current Y position of bull body
 	private float currentBodyPositionY;
 	// max
-	private float maxBodyPositionY = 10.0f;
+	private float maxBodyPositionY = 3.0f;
 	// res
 	private float restBodyPositionY = 0.0f;
 
@@ -93,11 +93,11 @@ public class CS2150Coursework extends GraphicsLab {
 	// boolean to check if beam is hit
 	private boolean beamHit;
 	// current angle of beam
-	private int currentBeamPosition;
+	private float currentBeamAngle;
 	// max
-	private int maxBeamPosition;
+	private float maxBeamAngle = 90.0f;
 	// rest
-	private int restBeamPosition;
+	private float restBeamAngle = 0.0f;
 
 	// id for ground plane texture
 	private Texture groundTexture;
@@ -197,26 +197,25 @@ public class CS2150Coursework extends GraphicsLab {
 				headDown = true;
 			}
 			// increment colour red
-			
-		} else if (bullEnraged && currentBodyPositionY > maxBodyPositionY) {
+		}  else if (bullEnraged && headDown && currentBodyPositionY < maxBodyPositionY) {
 			// increment currentBodyPosition and move legs
 			currentBodyPositionY -= 1.0f * getAnimationScale();
-			if (currentBodyPositionY == 10000.0f){
+			if (currentBodyPositionY == 10000.0f) {
 				beamHit = true;
 			}
-		} else if (foreLegsGoingForward
+		}  if (foreLegsGoingForward
 				&& currentForeLegsPosition > maxForeLegsPosition) {
 			// increment fore legs forward
-		} else if (rearLegsGoingForward
+		}  if (rearLegsGoingForward
 				&& currentRearLegsPosition > maxRearLegsPosition) {
 			// increment rear legs forward
-		} else if (!foreLegsGoingForward
+		}  if (!foreLegsGoingForward
 				&& currentForeLegsPosition < maxForeLegsPosition) {
 			// increment fore legs backward
-		} else if (!rearLegsGoingForward
+		}  if (!rearLegsGoingForward
 				&& currentRearLegsPosition < maxRearLegsPosition) {
 			// increment rear legs backward
-		} else if (beamHit) {
+		}  if (beamHit) {
 			// rotate beam about a touching pole
 		}
 
@@ -328,13 +327,12 @@ public class CS2150Coursework extends GraphicsLab {
 			GL11.glMaterial(GL11.GL_FRONT, GL11.GL_DIFFUSE,
 					FloatBuffer.wrap(bullFrontDiffuse));
 
-
 			// rotate body
 			GL11.glRotatef(90.0f, 0.0f, 1.0f, 0.0f);
 			// position then draw bull body
 			GL11.glTranslatef(-3.5f, 0.75f, -0.75f);
 			// move bull as if charging
-			GL11.glTranslatef(0.0f, 0.0f, 0.0f);//currentBodyPositionY
+			GL11.glTranslatef(0.0f, 0.0f, currentBodyPositionY);
 			GL11.glCallList(bullBodyList);
 
 			// head
@@ -465,9 +463,9 @@ public class CS2150Coursework extends GraphicsLab {
 				// beam #2
 				GL11.glPushMatrix();
 				{
-					//scale beam
+					// scale beam
 					GL11.glScalef(1.5f, 1.0f, 1.0f);
-					//rotate " sideways
+					// rotate " sideways
 					GL11.glRotatef(90.0f, 0.0f, 1.0f, 0.0f);
 					// position beam
 					GL11.glTranslatef(-1.1f, 1.0f, -2.0f);
@@ -514,6 +512,8 @@ public class CS2150Coursework extends GraphicsLab {
 					{
 						// rotate pole upright
 						GL11.glRotatef(90.0f, 1.5f, 0.0f, 0.0f);
+						// rotate when hit
+						GL11.glRotatef(currentBeamAngle, 1.5f, 0.0f, 0.0f);
 						// position "
 						GL11.glTranslatef(-3.0f, 5.0f, -2.0f);
 						// draw "
@@ -524,9 +524,9 @@ public class CS2150Coursework extends GraphicsLab {
 					// beam #4
 					GL11.glPushMatrix();
 					{
-						//scale beam
+						// scale beam
 						GL11.glScalef(1.5f, 1.0f, 1.0f);
-						//rotate " sideways
+						// rotate " sideways
 						GL11.glRotatef(90.0f, 0.0f, 1.0f, 0.0f);
 						// position beam
 						GL11.glTranslatef(-5.1f, 1.0f, -2.0f);
@@ -592,7 +592,7 @@ public class CS2150Coursework extends GraphicsLab {
 		currentHeadAngle = restHeadAngle;
 		currentForeLegsPosition = restForeLegsPosition;
 		currentRearLegsPosition = restRearLegsPosition;
-		currentBeamPosition = restBeamPosition;
+		currentBeamAngle = restBeamAngle;
 
 	}
 
