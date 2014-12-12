@@ -1,11 +1,59 @@
 /* CS2150Coursework.java
- * TODO: put your university username and full name here
+ * merrittj - Josh Merritt
  *
  * Scene Graph:
- *  Scene origin
+ *  [Ry(currentPlaneAngle)]Scene origin
  *  |
- *
- *  TODO: Provide a scene graph for your submission
+ *  +-- [S(60,1,60)]Ground Plane
+ *  |	|
+ *  |	+-- [T(7,0,-2.6)]Bull and Pen
+ *  |		|
+ *  |		+-- [T(0,0,CurrentBodyX) T(-3.5,0.75,-0.75) Ry(90)]Bull
+ *  |		|	|
+ *  |		|	+-- [S(1,0.5,1) Rz(currentHeadAngle) T(0,0.75,-0.5) Ry(270)]Head
+ *  |		|	|	|
+ *  |		|	|	+-- [T(0,0.3,0.5) Ry(-45) Rz(90)]Right Horn
+ *  |		|	|	|
+ *  |		|	|	+-- [T(2.5,0,0.5) Rx(180), R-x(90)]Left Horn
+ *  |		|	|
+ *  |		|	+-- [Rx(90)]Legs
+ *  |		|		|
+ *  |		|		+-- [Rx(currentForeLegsAngle)]Front Right Leg
+ *  |		|		|
+ *  |		|		+-- [Rx(currentRearLegsAngle) T(0,2,0)]Back Left Leg
+ *  |		|		|
+ *  |		|		+-- [Rx(currentRearLegsAngle) T(1,2,0)]Back Right Leg
+ *  |		|		|
+ *  |		|		+-- [Rx(currentForeLegsAngle) T(1,0,0)]Front Left Leg
+ *  |		|
+ *  |		+-- Pen
+ *  |			|
+ *  |			+-- Pair #1 - Far Left Pole, Left Beam
+ *	|			|	|
+ *	|			|	+-- [T(-3,1,-2) Rx(90)]Pole
+ *	|			|	|
+ *	|			|	+-- [Ry(currentBeamAngle) T(-3.15,1,1)]Beam
+ *	|			|
+ *  |			+-- Pair #2 - Far Right Pole, Far Beam
+ *  |			|	|
+ *	|			|	+-- [T(3,5,-2) Rx(90)]Pole
+ *	|			|	|
+ *	|			|	+-- [T(-1.1,1,-2) Ry(90) S(1.5,1,1)]Beam
+ *	|			|	
+ *  |			+-- Pair #3 - Near Right Pole, Right Beam
+ *  |			|	|
+ *	|			|	+-- [T(3,5,-2) Rx(90)]Pole
+ *	|			|	|
+ *	|			|	+-- [T92.9,1,1)]Beam
+ *	|			|
+ *  |			+-- Pair #4 - Near Left Pole, Near Beam
+ *  |				|
+ *	|				+-- [T(-3,5,-2) Rx(90)]Pole
+ *	|				|
+ *	|				+-- [T(-5.1,1,-2) Ry(90) S(1.5,1,1)]Beam
+ *	|
+ *	+-- [Rx(90) T(0,0.35,-40) S(100,60,1)]Sky Plane
+ *  
  */
 package coursework.merrittj;
 
@@ -19,7 +67,7 @@ import org.newdawn.slick.opengl.Texture;
 import GraphicsLab.*;
 
 /**
- * TODO: Briefly describe your submission here
+ * Animation of a bull in a pen. When enraged, the bull will lower it's head and charge out of the pen, breaking a fence beam.
  * 
  * <p>
  * Controls:
@@ -30,13 +78,14 @@ import GraphicsLab.*;
  * <li>While viewing the scene along the x, y or z axis, use the up and down
  * cursor keys to increase or decrease the viewpoint's distance from the scene
  * origin
+ * <li>Press r to enrage the bull and see it escape
+ * <li>Press the left and right cursor keys to rotate the scene for a different viewpoint
+ * <li>Press space to reset the bull and pen positions
  * </ul>
- * TODO: Add any additional controls for your sample to the list above
+ * 
  * 
  */
 public class CS2150Coursework extends GraphicsLab {
-	// TODO: Feel free to change the window title and default animation scale
-	// here
 
 	// display list id for the bull head
 	private final int bullHeadList = 1;
@@ -47,29 +96,27 @@ public class CS2150Coursework extends GraphicsLab {
 	// display list id for planes
 	private final int planeList = 4;
 
+	// current angle of the scene (about y axis)
 	private float currentPlaneAngle;
 
 	// boolean to check if bull enraged
 	private boolean bullEnraged;
-	// boolean to check if headDown
+	// boolean to check if head is fully lowered
 	private boolean headDown;
 
-	// current Y position of bull body
+	// current X position of bull body
 	private float currentBodyPositionX;
-	// max
-	private float maxBodyPositionY = -10.0f;
-	// rest
-	private float restBodyPositionY = 0.0f;
+	// rest position (ie in pen)
+	private float restBodyPositionX = 0.0f;
 
 	// current angle of bull head
 	private float currentHeadAngle;
 	// max (ie fully down)
 	private float maxHeadAngle = 90.0f;
-	// rest
+	// rest (ie fully upright)
 	private float restHeadAngle = 0.0f;
 
-	// boolean to check if fore legs going forward (i.e true means going
-	// forward, false means going backward
+	// boolean to check if fore legs going forward (i.e true means going forward, false means going backward)
 	private boolean foreLegsGoingForward;
 	// current angle of fore legs
 	private float currentForeLegsAngle;
@@ -80,8 +127,7 @@ public class CS2150Coursework extends GraphicsLab {
 	// rest
 	private float restForeLegsAngle = 0.0f;
 
-	// boolean to check if rear legs going forward (i.e true means going
-	// forward, false means going backward
+	// boolean to check if rear legs going forward (i.e true means going forward, false means going backward)
 	private boolean rearLegsGoingForward;
 	// current angle of rear legs
 	private float currentRearLegsAngle;
@@ -92,7 +138,7 @@ public class CS2150Coursework extends GraphicsLab {
 	// rest
 	private float restRearLegsAngle = 0.0f;
 
-	// boolean to check if beam is hit
+	// boolean to check if beam should be rotating out of the way
 	private boolean beamHit;
 	// current angle of beam
 	private float currentBeamAngle;
@@ -107,20 +153,21 @@ public class CS2150Coursework extends GraphicsLab {
 	private Texture skyTexture;
 
 	public static void main(String args[]) {
-		new CS2150Coursework().run(WINDOWED, "CS2150 Coursework Submission",
+		new CS2150Coursework().run(WINDOWED, "Josh Merritt - Don't Wear Red",
 				0.1f);
 	}
 
 	protected void initScene() throws Exception {
-		// TODO: finish texture loading and mess with lighting
+		// TODO: mess with lighting
 
-		// load textures
+		// load ground and sky textures
 		groundTexture = loadTexture("coursework/merrittj/textures/grass.jpg");
 		skyTexture = loadTexture("coursework/merrittj/textures/360sky.jpg");
 
 		// initialise booleans
 		bullEnraged = false;
 		headDown = false;
+		// initialise angles
 		currentForeLegsAngle = 0.0f;
 		currentRearLegsAngle = 0.0f;
 		currentPlaneAngle = 0.0f;
@@ -132,27 +179,22 @@ public class CS2150Coursework extends GraphicsLab {
 				FloatBuffer.wrap(globalAmbient));
 
 		// first light for the scene is xxxxx
-		float diffuse0[] = { 0.8f, 0.8f, 0.8f, 1.0f };
+		float diffuse0[] = { 0.9f, 0.9f, 0.9f, 1.0f };
 		// with xxx ambient
 		float ambient0[] = { 0.9f, 0.9f, 0.9f, 1.0f };
-		// with position above viewpoint?
+		// with position above viewpoint
 		float position0[] = { -10.0f, 10.0f, 0.0f, 1.0f };
 
 		// supply properties for first light and enable
-		GL11.glLight(GL11.GL_LIGHT0, GL11.GL_AMBIENT,
-				FloatBuffer.wrap(ambient0));
-		GL11.glLight(GL11.GL_LIGHT0, GL11.GL_DIFFUSE,
-				FloatBuffer.wrap(diffuse0));
-		GL11.glLight(GL11.GL_LIGHT0, GL11.GL_SPECULAR,
-				FloatBuffer.wrap(diffuse0));
-		GL11.glLight(GL11.GL_LIGHT0, GL11.GL_POSITION,
-				FloatBuffer.wrap(position0));
+		GL11.glLight(GL11.GL_LIGHT0, GL11.GL_AMBIENT,FloatBuffer.wrap(ambient0));
+		GL11.glLight(GL11.GL_LIGHT0, GL11.GL_DIFFUSE,FloatBuffer.wrap(diffuse0));
+		GL11.glLight(GL11.GL_LIGHT0, GL11.GL_SPECULAR,FloatBuffer.wrap(diffuse0));
+		GL11.glLight(GL11.GL_LIGHT0, GL11.GL_POSITION,FloatBuffer.wrap(position0));
 		GL11.glEnable(GL11.GL_LIGHT0);
 
 		// enable lighting calculations
 		GL11.glEnable(GL11.GL_LIGHTING);
-		// ensure that all normals are automatically re-normalised after
-		// transformations
+		// ensure that all normals are automatically re-normalised after transformations
 		GL11.glEnable(GL11.GL_NORMALIZE);
 
 		// prep display lists
@@ -177,12 +219,11 @@ public class CS2150Coursework extends GraphicsLab {
 		}
 		GL11.glEndList();
 
+		// disable face culling
 		GL11.glDisable(GL11.GL_CULL_FACE);
 	}
 
 	protected void checkSceneInput() {
-		// TODO: Check for keyboard and mouse
-		// input here
 
 		if (Keyboard.isKeyDown(Keyboard.KEY_R)) {
 			bullEnraged = true;
@@ -200,64 +241,68 @@ public class CS2150Coursework extends GraphicsLab {
 	}
 
 	protected void updateScene() {
-		// TODO: Update your scene variables here - remember to use the current
-		// animation scale value
-		// (obtained via a call to getAnimationScale()) in your modifications so
-		// that your animations
-		// can be made faster or slower depending on the machine you are working
-		// on
 
+		// if r pressed, lower head to 90 deg
 		if (bullEnraged && (currentHeadAngle < maxHeadAngle)) {
-			// increment currentHeadPosition
 			currentHeadAngle += 1.0f * getAnimationScale();
 			if (currentHeadAngle >= maxHeadAngle) {
 				headDown = true;
 				foreLegsGoingForward = true;
 				rearLegsGoingForward = false;
 			}
-			// increment colour red
-		} else if (headDown) { // headDown
-			// increment currentBodyPosition and move legs
+///////////// increment colour red
+		} 
+		
+		// if head is lowered, start moving bull out of pen
+		else if (headDown) {
 			currentBodyPositionX -= 0.1f * getAnimationScale();
+			// immediately open fence when bull starts moving
 			beamHit = true;
 		}
+		
 		if (headDown) {
+			
+			// if fore legs are supposed to be moving forwards, increment angle
 			if (foreLegsGoingForward && currentForeLegsAngle < maxForeLegsAngle) {
-				// increment fore legs forward
 				currentForeLegsAngle += 1.0f * getAnimationScale();
+				// if fore legs reach max forward angle, set legs to go backwards
 				if (currentForeLegsAngle >= maxForeLegsAngle) {
 					foreLegsGoingForward = false;
 				}
 			}
-			if (!foreLegsGoingForward
-					&& currentForeLegsAngle >= minForeLegsAngle) {
-				// increment fore legs backward
+			
+			// if fore legs are supposed to be going backwards, decrement angle
+			if (!foreLegsGoingForward && currentForeLegsAngle >= minForeLegsAngle) {
 				currentForeLegsAngle -= 1.0f * getAnimationScale();
+				// if fore legs reach min angle, set legs to go forwards
 				if (currentForeLegsAngle <= minForeLegsAngle) {
 					foreLegsGoingForward = true;
 				}
-
 			}
 
+			// if rear legs are supposed to be moving forwards, increment angle 
 			if (rearLegsGoingForward && currentRearLegsAngle < maxRearLegsAngle) {
 				// increment rear legs forward
 				currentRearLegsAngle += 1.0f * getAnimationScale();
+				// if fore legs reach max angle, set legs to go backwards
 				if (currentRearLegsAngle >= maxRearLegsAngle) {
 					rearLegsGoingForward = false;
 				}
 			}
 
-			if (!rearLegsGoingForward
-					&& currentRearLegsAngle > minRearLegsAngle) {
-				// increment rear legs backward
+			// if rear legs are supposed to be moving backwards, decrement angle
+			if (!rearLegsGoingForward && currentRearLegsAngle > minRearLegsAngle) {
 				currentRearLegsAngle -= 1.0f * getAnimationScale();
+				// if rear legs reach min angle, set legs to go forwards
 				if (currentRearLegsAngle <= minRearLegsAngle) {
 					rearLegsGoingForward = true;
 				}
 			}
+			
+			// if beam hit and beam isn't at max angle, increment angle
 			if (beamHit && currentBeamAngle > maxBeamAngle) {
-				// rotate beam about a touching pole
 				currentBeamAngle -= 2.0f * getAnimationScale();
+				// if beam is at max angle, stop movement
 				if (currentBeamAngle <= maxBeamAngle) {
 					beamHit = false;
 				}
@@ -267,11 +312,6 @@ public class CS2150Coursework extends GraphicsLab {
 	}
 
 	protected void renderScene() {
-		// TODO: Render your scene here - remember
-		// that a scene graph will help you write
-		// this method!
-		// It will probably call a number of other
-		// methods you will write.
 
 		GL11.glPushMatrix();
 		{
@@ -290,14 +330,13 @@ public class CS2150Coursework extends GraphicsLab {
 				// enable texturing and bind ground texture
 				GL11.glDisable(GL11.GL_TEXTURE_2D);
 				GL11.glEnable(GL11.GL_TEXTURE_2D);
-				GL11.glBindTexture(GL11.GL_TEXTURE_2D,
-						groundTexture.getTextureID());
+				GL11.glBindTexture(GL11.GL_TEXTURE_2D, groundTexture.getTextureID());
 
 				GL11.glPushMatrix();
 				{
 					// scale ground plane
 					GL11.glScalef(60.0f, 1.0f, 60.0f);
-					// draw "
+					// draw ground plane
 					GL11.glCallList(planeList);
 
 					// disable textures and reset local lighting changes
@@ -308,22 +347,22 @@ public class CS2150Coursework extends GraphicsLab {
 
 				GL11.glPushMatrix();
 				{
-
 					//move bull and pen
 					GL11.glTranslatef(7.0f, 0.0f, -2.6f);
+					
 					// draw bull
 					GL11.glPushMatrix();
 					{
+						// set bull material properties since head, body, horns, and legs will all be the same
+						
 						// bull shininess
-						float bullFrontShininess = 2.0f;
+						float bullFrontShininess = 0.0f;
 						// bull reflection
-						float bullFrontSpecular[] = { 0.6f, 0.6f, 0.6f, 1.0f };
+						float bullFrontSpecular[] = { 0.2f, 0.2f, 0.2f, 1.0f };
 						// bull diffuse
-						float bullFrontDiffuse[] = { 0.6f, 0.6f, 0.6f, 1.0f };
+						float bullFrontDiffuse[] = { 0.5f, 0.5f, 0.5f, 1.0f };
 
-						// set bull material properties since head, body, horns,
-						// and legs
-						// will all be the same
+						
 						GL11.glMaterialf(GL11.GL_FRONT, GL11.GL_SHININESS,
 								bullFrontShininess);
 						GL11.glMaterial(GL11.GL_FRONT, GL11.GL_SPECULAR,
@@ -331,44 +370,43 @@ public class CS2150Coursework extends GraphicsLab {
 						GL11.glMaterial(GL11.GL_FRONT, GL11.GL_DIFFUSE,
 								FloatBuffer.wrap(bullFrontDiffuse));
 
-						// rotate body
+						// rotate body to face left
 						GL11.glRotatef(90.0f, 0.0f, 1.0f, 0.0f);
-						// position then draw bull body
+						// position head
 						GL11.glTranslatef(-3.5f, 0.75f, -0.75f);
 						// move bull as if charging
 						GL11.glTranslatef(0.0f, 0.0f, currentBodyPositionX);
+						// draw body
 						GL11.glCallList(bullBodyList);
 
 						// head
 						GL11.glPushMatrix();
 						{
-							// rotate head to correct direction
+							// rotate head to face left
 							GL11.glRotatef(270.0f, 0.0f, 1.0f, 0.0f);
-							//
+							// position head
 							GL11.glTranslatef(0.0f, 0.75f, -0.5f);
-							// rotate head when enraged
+							// rotate head down when enraged
 							GL11.glRotatef(currentHeadAngle, 0.0f, 0.0f, 1.0f);
-							// scale "
+							// scale head
 							GL11.glScalef(1.0f, 0.5f, 1.0f);
-							// position then draw bull head;
+							// draw head;
 							GL11.glCallList(bullHeadList);
 
 							GL11.glPushMatrix();
 							{
-								// position then draw bull horns
+								// rotate, position then draw bull horns
 								// right
 								GL11.glRotatef(90.0f, 0.0f, 0.0f, 1.0f);
 								GL11.glRotatef(-45.0f, 0.0f, 1.0f, 0.0f);
 								GL11.glTranslatef(0.0f, 0.3f, -2.5f);
-								new Cylinder()
-										.draw(0.125f, 0.125f, 2.0f, 7, 10);
+								new Cylinder().draw(0.125f, 0.125f, 2.0f, 7, 10);
 
 								// left
 								GL11.glRotatef(90.0f, 0.0f, -1.0f, 0.0f);
 								GL11.glRotatef(180.0f, 1.0f, 0.0f, 0.0f);
 								GL11.glTranslatef(2.5f, 0.0f, 0.5f);
-								new Cylinder()
-										.draw(0.125f, 0.125f, 2.0f, 7, 10);
+								new Cylinder().draw(0.125f, 0.125f, 2.0f, 7, 10);
 							}
 							GL11.glPopMatrix();
 
@@ -377,50 +415,52 @@ public class CS2150Coursework extends GraphicsLab {
 
 						GL11.glPushMatrix();
 						{
-							// position then draw bull legs
 							// rotate upright
 							GL11.glRotatef(90.0f, 1.5f, 0.0f, 0.0f);
 
 							GL11.glPushMatrix();
 							{
 								// front right
-								GL11.glRotatef(currentForeLegsAngle, 1.0f,
-										0.0f, 0.0f);
-								new Cylinder().draw(0.125f, 0.125f, 0.8f, 10,
-										10);
+								// rotate if bull moving
+								GL11.glRotatef(currentForeLegsAngle, 1.0f, 0.0f, 0.0f);
+								// draw leg
+								new Cylinder().draw(0.125f, 0.125f, 0.8f, 10, 10);
 							}
 							GL11.glPopMatrix();
 
 							GL11.glPushMatrix();
 							{
 								// front left
+								// position leg
 								GL11.glTranslatef(1.0f, 0.0f, 0.0f);
-								GL11.glRotatef(currentForeLegsAngle, 1.0f,
-										0.0f, 0.0f);
-								new Cylinder().draw(0.125f, 0.125f, 0.8f, 10,
-										10);
+								// rotate if bull moving
+								GL11.glRotatef(currentForeLegsAngle, 1.0f, 0.0f, 0.0f);
+								// draw leg
+								new Cylinder().draw(0.125f, 0.125f, 0.8f, 10, 10);
 							}
 							GL11.glPopMatrix();
 
 							GL11.glPushMatrix();
 							{
 								// back left
+								// position leg
 								GL11.glTranslatef(0.0f, 2.0f, 0.0f);
-								GL11.glRotatef(currentRearLegsAngle, 1.0f,
-										0.0f, 0.0f);
-								new Cylinder().draw(0.125f, 0.125f, 0.8f, 10,
-										10);
+								// rotate if bull moving
+								GL11.glRotatef(currentRearLegsAngle, 1.0f, 0.0f, 0.0f);
+								// draw leg
+								new Cylinder().draw(0.125f, 0.125f, 0.8f, 10, 10);
 							}
 							GL11.glPopMatrix();
 
 							GL11.glPushMatrix();
 							{
 								// back right
+								// position leg
 								GL11.glTranslatef(1.0f, 2.0f, 0.0f);
-								GL11.glRotatef(currentRearLegsAngle, 1.0f,
-										0.0f, 0.0f);
-								new Cylinder().draw(0.125f, 0.125f, 0.8f, 10,
-										10);
+								// rotate if bull moving
+								GL11.glRotatef(currentRearLegsAngle, 1.0f, 0.0f, 0.0f);
+								// draw leg
+								new Cylinder().draw(0.125f, 0.125f, 0.8f, 10, 10);
 							}
 							GL11.glPopMatrix();
 
@@ -430,9 +470,10 @@ public class CS2150Coursework extends GraphicsLab {
 					}
 					GL11.glPopMatrix();
 
-					// draw fencing
+					// draw pen
 					GL11.glPushMatrix();
 					{
+						// set all pen material properties to be the same
 						// wood shininess
 						float woodFrontShininess = 2.0f;
 						// wood reflection
@@ -441,29 +482,23 @@ public class CS2150Coursework extends GraphicsLab {
 						float woodFrontDiffuse[] = { 0.2f, 0.2f, 0.2f, 1.0f };
 
 						// set pole material properties
-						GL11.glMaterialf(GL11.GL_FRONT, GL11.GL_SHININESS,
-								woodFrontShininess);
-						GL11.glMaterial(GL11.GL_FRONT, GL11.GL_SPECULAR,
-								FloatBuffer.wrap(woodFrontSpecular));
-						GL11.glMaterial(GL11.GL_FRONT, GL11.GL_DIFFUSE,
-								FloatBuffer.wrap(woodFrontDiffuse));
-
-						// TODO
+						GL11.glMaterialf(GL11.GL_FRONT, GL11.GL_SHININESS, woodFrontShininess);
+						GL11.glMaterial(GL11.GL_FRONT, GL11.GL_SPECULAR, FloatBuffer.wrap(woodFrontSpecular));
+						GL11.glMaterial(GL11.GL_FRONT, GL11.GL_DIFFUSE, FloatBuffer.wrap(woodFrontDiffuse));
 
 						GL11.glPushMatrix();
 						{
-							// pair #1 (far left pole, left beam)
+							// pair #1 - far left pole, left beam
 
 							// pole #1
 							GL11.glPushMatrix();
 							{
 								// rotate pole upright
 								GL11.glRotatef(90.0f, 1.5f, 0.0f, 0.0f);
-								// position "
+								// position pole
 								GL11.glTranslatef(-3.0f, 1.0f, -2.0f);
-								// draw "
-								new Cylinder()
-										.draw(0.125f, 0.125f, 2.0f, 4, 10);
+								// draw pole
+								new Cylinder().draw(0.125f, 0.125f, 2.0f, 4, 10);
 							}
 							GL11.glPopMatrix();
 
@@ -473,9 +508,8 @@ public class CS2150Coursework extends GraphicsLab {
 								// position beam
 								GL11.glTranslatef(-3.15f, 1.0f, 1.0f);
 								// rotate beam when hit
-								GL11.glRotatef(currentBeamAngle, 0.0f, 1.0f,
-										0.0f);
-								// draw "
+								GL11.glRotatef(currentBeamAngle, 0.0f, 1.0f, 0.0f);
+								// draw beam
 								GL11.glCallList(beamList);
 							}
 							GL11.glPopMatrix();
@@ -485,18 +519,17 @@ public class CS2150Coursework extends GraphicsLab {
 
 						GL11.glPushMatrix();
 						{
-							// pair #2 (far right pole, far beam)
+							// pair #2 - far right pole, far beam
 
 							// pole #2
 							GL11.glPushMatrix();
 							{
 								// rotate pole upright
 								GL11.glRotatef(90.0f, 1.5f, 0.0f, 0.0f);
-								// position "
+								// position pole
 								GL11.glTranslatef(3.0f, 1.0f, -2.0f);
-								// draw "
-								new Cylinder()
-										.draw(0.125f, 0.125f, 2.0f, 4, 10);
+								// draw pole
+								new Cylinder().draw(0.125f, 0.125f, 2.0f, 4, 10);
 							}
 							GL11.glPopMatrix();
 
@@ -505,11 +538,11 @@ public class CS2150Coursework extends GraphicsLab {
 							{
 								// scale beam
 								GL11.glScalef(1.5f, 1.0f, 1.0f);
-								// rotate " sideways
+								// rotate beam sideways
 								GL11.glRotatef(90.0f, 0.0f, 1.0f, 0.0f);
 								// position beam
 								GL11.glTranslatef(-1.1f, 1.0f, -2.0f);
-								// draw "
+								// draw beam
 								GL11.glCallList(beamList);
 							}
 							GL11.glPopMatrix();
@@ -519,18 +552,17 @@ public class CS2150Coursework extends GraphicsLab {
 
 						GL11.glPushMatrix();
 						{
-							// pair #3 (near right pole, right beam)
+							// pair #3 - near right pole, right beam
 
 							// pole #3
 							GL11.glPushMatrix();
 							{
 								// rotate pole upright
 								GL11.glRotatef(90.0f, 1.5f, 0.0f, 0.0f);
-								// position "
+								// position pole
 								GL11.glTranslatef(3.0f, 5.0f, -2.0f);
-								// draw "
-								new Cylinder()
-										.draw(0.125f, 0.125f, 2.0f, 4, 10);
+								// draw pole
+								new Cylinder().draw(0.125f, 0.125f, 2.0f, 4, 10);
 							}
 							GL11.glPopMatrix();
 
@@ -539,25 +571,24 @@ public class CS2150Coursework extends GraphicsLab {
 							{
 								// position beam
 								GL11.glTranslatef(2.9f, 1.0f, 1.0f);
-								// draw "
+								// draw beam
 								GL11.glCallList(beamList);
 							}
 							GL11.glPopMatrix();
 
 							GL11.glPushMatrix();
 							{
-								// pair #4 (near left pole, left beam)
+								// pair #4 - near left pole, near beam
 
 								// pole #4
 								GL11.glPushMatrix();
 								{
 									// rotate pole upright
 									GL11.glRotatef(90.0f, 1.5f, 0.0f, 0.0f);
-									// position "
+									// position pole
 									GL11.glTranslatef(-3.0f, 5.0f, -2.0f);
-									// draw "
-									new Cylinder().draw(0.125f, 0.125f, 2.0f,
-											4, 10);
+									// draw pole
+									new Cylinder().draw(0.125f, 0.125f, 2.0f, 4, 10);
 								}
 								GL11.glPopMatrix();
 
@@ -566,11 +597,11 @@ public class CS2150Coursework extends GraphicsLab {
 								{
 									// scale beam
 									GL11.glScalef(1.5f, 1.0f, 1.0f);
-									// rotate " sideways
+									// rotate beam sideways
 									GL11.glRotatef(90.0f, 0.0f, 1.0f, 0.0f);
 									// position beam
 									GL11.glTranslatef(-5.1f, 1.0f, -2.0f);
-									// draw "
+									// draw beam
 									GL11.glCallList(beamList);
 								}
 								GL11.glPopMatrix();
@@ -604,12 +635,11 @@ public class CS2150Coursework extends GraphicsLab {
 
 			// scale sky plane
 			GL11.glScalef(100.0f, 60.0f, 1.0f);
-			// rotate " 90 deg
+			// position sky plane
 			GL11.glTranslatef(0.0f, 0.35f, -40.0f);
+			// rotate sky plane 90 deg
 			GL11.glRotatef(90.0f, 1.0f, 0.0f, 0.0f);
-			// position "
-
-			// draw "
+			// draw sky plane
 			GL11.glCallList(planeList);
 
 			// disable textures and reset local lighting changes
@@ -619,11 +649,12 @@ public class CS2150Coursework extends GraphicsLab {
 		GL11.glPopMatrix();
 	}
 
+	// reset any variables altered during animation
 	private void resetAnimations() {
 		bullEnraged = false;
 		headDown = false;
 		beamHit = false;
-		currentBodyPositionX = restBodyPositionY;
+		currentBodyPositionX = restBodyPositionX;
 		currentHeadAngle = restHeadAngle;
 		currentForeLegsAngle = restForeLegsAngle;
 		currentRearLegsAngle = restRearLegsAngle;
@@ -632,20 +663,13 @@ public class CS2150Coursework extends GraphicsLab {
 	}
 
 	protected void setSceneCamera() {
-		// call the default behaviour defined in GraphicsLab. This will set a
-		// default perspective projection
-		// and default camera settings ready for some custom camera positioning
-		// below...
 		super.setSceneCamera();
 
-		// TODO: If it is appropriate for your scene, modify the camera's
-		// position and orientation here
-		// using a call to GL11.gluLookAt(...)
+		// set camera up and back from origin for better viewpoint
 		GLU.gluLookAt(0.0f, 10.0f, 30.0f, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f, 0.0f);
 	}
 
 	protected void cleanupScene() {
-		// TODO: Clean up your resources here
 	}
 
 	protected void drawUnitBullHead() {
@@ -1055,7 +1079,6 @@ public class CS2150Coursework extends GraphicsLab {
 			GL11.glEnd();
 
 		}
-
 	}
 
 	protected void drawUnitPlane() {
@@ -1084,24 +1107,5 @@ public class CS2150Coursework extends GraphicsLab {
 			v1.submit();
 		}
 		GL11.glEnd();
-
-		// if the user is viewing an axis, draw plane with lines
-		if (isViewingAxis()) {
-
-			GL11.glPushAttrib(GL11.GL_TEXTURE_2D);
-			// disable textures
-			GL11.glDisable(GL11.GL_TEXTURE_2D);
-			GL11.glBegin(GL11.GL_LINE_LOOP);
-			{
-				v4.submit();
-				v3.submit();
-				v2.submit();
-				v1.submit();
-			}
-			GL11.glEnd();
-			GL11.glPopAttrib();
-		}
-
 	}
-
 }
